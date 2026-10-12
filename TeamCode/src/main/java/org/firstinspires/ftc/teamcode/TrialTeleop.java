@@ -13,11 +13,11 @@ public class TrialTeleop extends LinearOpMode {
 
         DcMotor Left;
         DcMotor Right;
-        Servo TimmyTommy;
+        Servo Servo;
 
-        Left = hardwareMap.get(DcMotor.class, "L");
-        Right = hardwareMap.get(DcMotor.class, "R");
-        TimmyTommy = hardwareMap.get(Servo.class, "TT");
+        Left = hardwareMap.get(DcMotor.class, "frontLeft");
+        Right = hardwareMap.get(DcMotor.class, "frontRight");
+         Servo = hardwareMap.get(Servo.class, "Servo");
 
         waitForStart();
 
@@ -29,14 +29,14 @@ public class TrialTeleop extends LinearOpMode {
             Right.setPower(-gamepad1.right_stick_y);
 
             if (gamepad1.a) {
-                TimmyTommy.setPosition(1.0);
+                Servo.setPosition(1.0);
             } else if (gamepad1.b) {
-                TimmyTommy.setPosition(0.0);
+                Servo.setPosition(0.0);
             }
 
             telemetry.addData("Left Motor Power", Left.getPower());
             telemetry.addData("Right Motor Power", Right.getPower());
-            telemetry.addData("Servo Position", TimmyTommy.getPosition());
+            telemetry.addData("Servo Position", Servo.getPosition());
             telemetry.update();
 
 
