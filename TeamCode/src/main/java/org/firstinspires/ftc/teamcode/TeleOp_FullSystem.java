@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-@TeleOp(name = "First Trial TeleOp and Intake")
+@TeleOp(name = "current teleop")
 public class TeleOp_FullSystem extends LinearOpMode{
     DcMotor Left;
     DcMotor Right;
