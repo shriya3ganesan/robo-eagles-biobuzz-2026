@@ -15,6 +15,7 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
     Servo Transfer;
     Servo Bob;
     Servo Tim;
+
     @Override
     public void runOpMode() {
 
@@ -22,9 +23,9 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
         Right = hardwareMap.get(DcMotor.class, "R");
         Intake = hardwareMap.get(DcMotor.class, "Int");
         Outtake = hardwareMap.get(DcMotor.class, "Out");
-        Transfer = hardwareMap.get(Servo.class,"Trn");
-        Bob = hardwareMap.get(Servo.class,"B");
-        Tim = hardwareMap.get(Servo.class,"T");
+        Transfer = hardwareMap.get(Servo.class, "Trn");
+        Bob = hardwareMap.get(Servo.class, "B");
+        Tim = hardwareMap.get(Servo.class, "T");
 
         Left.setDirection(DcMotorSimple.Direction.REVERSE);
         //-
@@ -80,33 +81,27 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
                 Intake.setPower(0.0);
             }
 
-           if(gamepad1.left_bumper) {
-               Outtake.setPower(0.6);
-           } else {
-               Outtake.setPower(0.0);
-           }
+            if (gamepad1.left_bumper) {
+                Outtake.setPower(0.6);
+            } else {
+                Outtake.setPower(0.0);
+            }
 
             if (gamepad1.x) {
                 Bob.setPosition(1.0);
-            }
-
-            else if (gamepad1.y) {
+            } else if (gamepad1.y) {
                 Bob.setPosition(0.0);
             }
 
             if (gamepad1.a) {
                 Tim.setPosition(1.0);
-            }
-
-            else if (gamepad1.b) {
+            } else if (gamepad1.b) {
                 Tim.setPosition(0.0);
             }
 
             if (gamepad1.dpad_down) {
                 Transfer.setPosition(1.0);
-            }
-
-            else if (gamepad1.dpad_right) {
+            } else if (gamepad1.dpad_right) {
                 Transfer.setPosition(0.0);
             }
 
