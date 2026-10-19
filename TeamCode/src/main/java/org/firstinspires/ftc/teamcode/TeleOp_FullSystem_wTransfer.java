@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-
 @TeleOp(name = "My name Jeff")
 public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
     DcMotor Left;
