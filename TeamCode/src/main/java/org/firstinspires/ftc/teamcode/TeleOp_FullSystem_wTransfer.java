@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+
 
 @TeleOp(name = "My name Jeff")
 public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
@@ -12,9 +13,9 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
     DcMotor Right;
     DcMotor Intake;
     DcMotor Outtake;
-    Servo Transfer;
-    Servo Bob;
-    Servo Tim;
+    CRServo Transfer;
+    CRServo Bob;
+    CRServo Tim;
 
     @Override
     public void runOpMode() {
@@ -23,9 +24,9 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
         Right = hardwareMap.get(DcMotor.class, "R");
         Intake = hardwareMap.get(DcMotor.class, "Int");
         Outtake = hardwareMap.get(DcMotor.class, "Out");
-        Transfer = hardwareMap.get(Servo.class, "Trn");
-        Bob = hardwareMap.get(Servo.class, "B");
-        Tim = hardwareMap.get(Servo.class, "T");
+        Transfer = hardwareMap.get(CRServo.class, "Trn");
+        Bob = hardwareMap.get(CRServo.class, "B");
+        Tim = hardwareMap.get(CRServo.class, "T");
 
         Left.setDirection(DcMotorSimple.Direction.REVERSE);
         //-
@@ -62,9 +63,9 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
             telemetry.addData("Intake On", intakeOn);
             telemetry.addData("Intake Power", Intake.getPower());
             telemetry.addData("Outtake Power", Outtake.getPower());
-            telemetry.addData("Transfer Position", Transfer.getPosition());
-            telemetry.addData("Bob Position", Bob.getPosition());
-            telemetry.addData("Tim Position", Tim.getPosition());
+            telemetry.addData("Transfer Position", Transfer.getPower());
+            telemetry.addData("Bob Position", Bob.getPower());
+            telemetry.addData("Tim Position", Tim.getPower());
             telemetry.update();
 
             if (gamepad1.right_trigger > 0.1) {
@@ -88,23 +89,31 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                Bob.setPosition(1.0);
+                Bob.setPower(1.0);
             } else if (gamepad1.y) {
-                Bob.setPosition(0.0);
+                Bob.setPower(0.0);
             }
 
             if (gamepad1.a) {
-                Tim.setPosition(1.0);
+                Tim.setPower(1.0);
             } else if (gamepad1.b) {
-                Tim.setPosition(0.0);
+                Tim.setPower(0.0);
             }
 
             if (gamepad1.dpad_down) {
-                Transfer.setPosition(1.0);
+                Transfer.setPower(1.0);
             } else if (gamepad1.dpad_right) {
-                Transfer.setPosition(0.0);
+                Transfer.setPower(0.0);
             }
 
+            // STOP ALL MOTORS AND SERVOS
+            Left.setPower(0.0);
+            Right.setPower(0.0);
+            Intake.setPower(0.0);
+            Outtake.setPower(0.0);
+            Transfer.setPower(0.0);
+            Bob.setPower(0.0);
+            Tim.setPower(0.0);
 
         }
     }
