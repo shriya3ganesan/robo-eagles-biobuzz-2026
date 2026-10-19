@@ -72,6 +72,8 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
 
            if(gamepad1.left_bumper) {
                Outtake.setPower(0.8);
+           } else {
+               Outtake.setPower(0.0);
            }
 
             if (gamepad1.x) {
