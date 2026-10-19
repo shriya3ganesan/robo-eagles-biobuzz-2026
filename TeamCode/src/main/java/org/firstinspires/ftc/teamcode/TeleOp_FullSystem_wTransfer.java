@@ -56,6 +56,16 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
             Left.setPower(leftPower);
             Right.setPower(rightPower);
 
+            //Telemetry -
+
+            telemetry.addData("Intake On", intakeOn);
+            telemetry.addData("Intake Power", Intake.getPower());
+            telemetry.addData("Outtake Power", Outtake.getPower());
+            telemetry.addData("Transfer Position", Transfer.getPosition());
+            telemetry.addData("Bob Position", Bob.getPosition());
+            telemetry.addData("Tim Position", Tim.getPosition());
+            telemetry.update();
+
             if (gamepad1.right_trigger > 0.1) {
                 intakeOn = true;
             }
@@ -71,7 +81,7 @@ public class TeleOp_FullSystem_wTransfer extends LinearOpMode {
             }
 
            if(gamepad1.left_bumper) {
-               Outtake.setPower(0.8);
+               Outtake.setPower(0.6);
            } else {
                Outtake.setPower(0.0);
            }
