@@ -18,24 +18,16 @@ public class JaxonAuto extends LinearOpMode {
     CRServo Bob;
     CRServo Tim;
 
+    // Encoder ticks per wheel revolution
+// Verify this value against your actual drivetrain motors
     static final double TICKS_PER_REV = 537.7;
-    static final double WHEEL_DIAMETER = 4.0;
+
+    // Actual wheel diameter: 104 mm
+    static final double WHEEL_DIAMETER = 104.0 / 25.4;
+
+    // Calculate encoder ticks per inch
     static final double TICKS_PER_INCH =
             TICKS_PER_REV / (Math.PI * WHEEL_DIAMETER);
-
-    public void moveForward(double power, long time) {
-
-        if (!opModeIsActive()) return;
-
-        frontLeft.setPower(power);
-        frontRight.setPower(power);
-        backLeft.setPower(power);
-        backRight.setPower(power);
-
-        sleep(time);
-
-        stopDrive();
-    }
 
     public void stopDrive() {
 
@@ -43,38 +35,40 @@ public class JaxonAuto extends LinearOpMode {
         frontRight.setPower(0.0);
         backLeft.setPower(0.0);
         backRight.setPower(0.0);
-
     }
 
+    public boolean driveInches(double inches, double power) {
 
-    public void driveInches(double inches, double power) {
+        if (!opModeIsActive()) return false;
 
-        // Reset encoder measurements
+        // STEP 1: Reset encoders
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // STEP 2: Calculate target ticks
         int ticks = (int) Math.round(inches * TICKS_PER_INCH);
 
-        // Set target distance
+        // STEP 3: Set targets
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
 
-        // Tell motors to travel to their targets
+        // STEP 4: Enable RUN_TO_POSITION
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        // STEP 5: Apply motor power
         frontLeft.setPower(Math.abs(power));
         frontRight.setPower(Math.abs(power));
         backLeft.setPower(Math.abs(power));
         backRight.setPower(Math.abs(power));
 
-        // Safety timeout
+        // STEP 6: Wait until targets or timeout
         long startTime = System.currentTimeMillis();
 
         while (opModeIsActive()
@@ -84,27 +78,52 @@ public class JaxonAuto extends LinearOpMode {
             idle();
         }
 
+        // STEP 7: Check whether targets were reached
+        boolean reachedTarget =
+                opModeIsActive()
+                        && !frontLeft.isBusy()
+                        && !frontRight.isBusy()
+                        && !backLeft.isBusy()
+                        && !backRight.isBusy();
+
+        // STEP 8: Display results
+        telemetry.addData("Target Ticks", ticks);
+        telemetry.addData("Front Left", frontLeft.getCurrentPosition());
+        telemetry.addData("Front Right", frontRight.getCurrentPosition());
+        telemetry.addData("Back Left", backLeft.getCurrentPosition());
+        telemetry.addData("Back Right", backRight.getCurrentPosition());
+        telemetry.addData("Reached Target", reachedTarget);
+        telemetry.update();
+
+        // STEP 9: Stop drivetrain
         stopDrive();
 
+        // STEP 10: Restore motor modes
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // STEP 11: Return the result
+        return reachedTarget;
     }
 
     public void shootFour() {
 
-        // Spin up the shooter
+        if (!opModeIsActive()) return;
+
         Outtake.setPower(0.6);
         sleep(1500);
 
-        // Feed game pieces into shooter
-        if (opModeIsActive()) {
+        for (int i = 0; i < 4 && opModeIsActive(); i++) {
+
             Transfer.setPower(1.0);
-            sleep(2000);
+            sleep(400);
+
+            Transfer.setPower(0.0);
+            sleep(500);
         }
 
-        // Stop feeding and shooting
         Transfer.setPower(0.0);
         Outtake.setPower(0.0);
     }
@@ -132,13 +151,14 @@ public class JaxonAuto extends LinearOpMode {
         //+
         Outtake.setDirection(DcMotorSimple.Direction.FORWARD);
         //+
-        boolean intakeOn = false;
-        boolean outtakeOn = false;
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        telemetry.addData("Status", "Jeff Auto Ready!");
+        telemetry.update();
 
         waitForStart();
 
@@ -146,29 +166,34 @@ public class JaxonAuto extends LinearOpMode {
             // Your robot code goes here!
 
             // STEP 1: Forward one foot
-            driveInches(12, 0.3);
+            boolean reachedShootingPosition = driveInches(12, 0.3);
 
-            sleep(300);
+            // STEP 2: Shoot only if the robot reached its target
+            if (reachedShootingPosition && opModeIsActive()) {
 
-            // STEP 2: Shoot four game pieces
-            if (opModeIsActive()) {
-                shootFour();
+                sleep(300);
+
+                if (opModeIsActive()) {
+                    shootFour();
+                }
+
+                sleep(300);
+
+                // STEP 3: Return to starting position
+                if (opModeIsActive()) {
+                    driveInches(-12, 0.3);
+                }
             }
-
-            sleep(300);
-
-            // STEP 3: Backward one foot
-            if (opModeIsActive()) {
-                driveInches(-12, 0.3);
-            }
-
-            // STEP 4: Stop everything
-            stopDrive();
-            Intake.setPower(0.0);
-            Outtake.setPower(0.0);
-            Transfer.setPower(0.0);
         }
 
-        }
+// STEP 4: Stop everything
+        stopDrive();
+        Intake.setPower(0.0);
+        Outtake.setPower(0.0);
+        Transfer.setPower(0.0);
+        Bob.setPower(0.0);
+        Tim.setPower(0.0);
     }
+}
+
 
