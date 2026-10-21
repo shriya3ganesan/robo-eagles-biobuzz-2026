@@ -49,6 +49,14 @@ public class TeleOpMecanumCode_Jaxon extends LinearOpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        telemetry.addData("Status", "Jeff TeleOp Ready!");
+        telemetry.update();
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -57,6 +65,10 @@ public class TeleOpMecanumCode_Jaxon extends LinearOpMode {
             double drive = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
+
+            if (Math.abs(drive) < 0.05) drive = 0;
+            if (Math.abs(strafe) < 0.05) strafe = 0;
+            if (Math.abs(turn) < 0.05) turn = 0;
 
             double frontLeftPower = drive + strafe + turn;
             double backLeftPower = drive - strafe + turn;
