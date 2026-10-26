@@ -115,7 +115,7 @@ public class TeleOpMecanumCode_Jaxon extends LinearOpMode {
             }
 
             if (outtakeOn) {
-                Outtake.setPower(0.75);
+                Outtake.setPower(-0.53);
             } else {
                 Outtake.setPower(0.0);
             }
