@@ -15,29 +15,27 @@ public class VienMechanumAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     //assigning wheel motors
-    private DcMotor backLeft = null;
-    private DcMotor backRight = null;
-    private DcMotor frontLeft = null;
-    private DcMotor frontRight = null;
+    private DcMotor backLeft = null; //3
+    private DcMotor backRight = null;//1
+    private DcMotor frontLeft = null;//2
+    private DcMotor frontRight = null;//0
 
     //assigning intake and outake
-    private DcMotor outake = null;
-    private DcMotor intake = null;
+    private DcMotor outake = null;//Exp 1
+    private DcMotor intake = null;//Exp 0
 
     //flower servos
-    private CRServo leftFlower = null;
-    private CRServo rightFlower = null;
+    private CRServo leftFlower = null; // 1
+    private CRServo rightFlower = null; // 0
 
-    //airport door(transfer)
-    private CRServo airportDoor = null;
+    //transfer
+    private CRServo transfer = null; // 2
 
 
     //104 mm mechanum wheels
     //Double check COUNTS_PER_MOTOR_REV var
     static final double COUNTS_PER_MOTOR_REV = 537.7;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-
-
     static final double WHEEL_DIAMETER_INCHES = 104.0 / 25.4;
 
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159);
@@ -51,14 +49,14 @@ public class VienMechanumAuto extends LinearOpMode {
 
         for (int i = 0; i < 4 && opModeIsActive(); i++) {
 
-            airportDoor.setPower(1.0);
+            transfer.setPower(1.0);
             sleep(400);
 
-            airportDoor.setPower(0.0);
+            transfer.setPower(0.0);
             sleep(500);
         }
 
-        airportDoor.setPower(0.0);
+        transfer.setPower(0.0);
         outake.setPower(0.0);
     }
 
@@ -143,7 +141,7 @@ public class VienMechanumAuto extends LinearOpMode {
         rightFlower = hardwareMap.get(CRServo.class,"f1");
         leftFlower = hardwareMap.get(CRServo.class,"f2");
         //transfer
-        airportDoor = hardwareMap.get(CRServo.class, "trn");
+        transfer = hardwareMap.get(CRServo.class, "trn");
 
 
         //set directions
@@ -162,6 +160,9 @@ public class VienMechanumAuto extends LinearOpMode {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        telemetry.addData("Status", "Mecanum Auto Ready");
+        telemetry.update();
 
         waitForStart();
 

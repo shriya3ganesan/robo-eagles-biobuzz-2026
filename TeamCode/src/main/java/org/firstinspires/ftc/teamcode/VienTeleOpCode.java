@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name= "Vien Test Code")
-public class VienTestCode extends LinearOpMode{
+public class VienTeleOpCode extends LinearOpMode{
     DcMotor backLeft;
     DcMotor backRight;
     DcMotor frontLeft;
@@ -40,6 +40,9 @@ public class VienTestCode extends LinearOpMode{
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        telemetry.addData("Status", "Mecanum TeleOp Ready");
+        telemetry.update();
 
         // Default intake/outtake:On/off
          boolean intakeOn = false;
