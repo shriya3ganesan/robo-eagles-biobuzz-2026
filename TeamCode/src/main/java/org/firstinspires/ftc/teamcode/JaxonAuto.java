@@ -157,7 +157,7 @@ public class JaxonAuto extends LinearOpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        telemetry.addData("Status", "Jeff Auto Ready!");
+        telemetry.addData("Status", "Auto Ready!");
         telemetry.update();
 
         waitForStart();
