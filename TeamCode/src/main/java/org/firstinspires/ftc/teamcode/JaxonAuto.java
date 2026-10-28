@@ -166,7 +166,7 @@ public class JaxonAuto extends LinearOpMode {
             // Your robot code goes here!
 
             // STEP 1: Forward one foot
-            boolean reachedShootingPosition = driveInches(12, 0.3);
+            boolean reachedShootingPosition = driveInches(-12, 0.3);
 
             // STEP 2: Shoot only if the robot reached its target
             if (reachedShootingPosition && opModeIsActive()) {
@@ -181,7 +181,7 @@ public class JaxonAuto extends LinearOpMode {
 
                 // STEP 3: Return to starting position
                 if (opModeIsActive()) {
-                    driveInches(-12, 0.3);
+                    driveInches(12, 0.3);
                 }
             }
         }
