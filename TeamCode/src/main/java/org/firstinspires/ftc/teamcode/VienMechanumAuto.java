@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 //Code moves robot forwards, shoots, and moves backwards.
 
+
 //imports
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,10 +27,10 @@ public class VienMechanumAuto extends LinearOpMode {
     private DcMotor intake = null;//Exp 1
 
     //flower servos
-   /*
+
     private CRServo leftFlower = null; // Exp 1
     private CRServo rightFlower = null; //Exp  0
-*/
+
     //transfer
     private CRServo transfer = null; // Exp 2
 
@@ -40,7 +41,7 @@ public class VienMechanumAuto extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 104.0 / 25.4;
 
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159);
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
 
     // shooter and transfer
@@ -62,28 +63,25 @@ public class VienMechanumAuto extends LinearOpMode {
         outake.setPower(0.0);
     }
 
-    public void encoderDrive ( double speed,
-                               double backLeftInches,
-                               double backRightInches,
-                               double frontLeftInches,
-                               double frontRightInches,
-                               double sleep     ) {
+    public boolean encoderDrive ( double speed, double blIn, double brIn, double flIn, double frIn) {
+        if (!opModeIsActive()) return false;
+
         //Reset encoder to 0
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //set new target
-        int newBLTarget = backLeft.getCurrentPosition() - (int) (backLeftInches * COUNTS_PER_INCH);
-        int newBRTarget = backRight.getCurrentPosition() - (int) (backRightInches * COUNTS_PER_INCH);
-        int newFLTarget = frontLeft.getCurrentPosition() + (int) (frontLeftInches * COUNTS_PER_INCH);
-        int newFRTarget = frontRight.getCurrentPosition() + (int) (frontRightInches * COUNTS_PER_INCH);
+        int newBLTar = backLeft.getCurrentPosition() + (int) (blIn * COUNTS_PER_INCH);
+        int newBRTar = backRight.getCurrentPosition() + (int) (brIn * COUNTS_PER_INCH);
+        int newFLTar = frontLeft.getCurrentPosition() + (int) (flIn * COUNTS_PER_INCH);
+        int newFRTar = frontRight.getCurrentPosition() + (int) (frIn * COUNTS_PER_INCH);
 
-        backLeft.setTargetPosition(newBLTarget);
-        backRight.setTargetPosition(newBRTarget);
-        frontLeft.setTargetPosition(newFLTarget);
-        frontRight.setTargetPosition(newFRTarget);
+        //targets
+        backLeft.setTargetPosition(newBLTar);
+        backRight.setTargetPosition(newBRTar);
+        frontLeft.setTargetPosition(newFLTar);
+        frontRight.setTargetPosition(newFRTar);
 
         // Run to positionn
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -98,18 +96,21 @@ public class VienMechanumAuto extends LinearOpMode {
         frontLeft.setPower(Math.abs(speed));
         frontRight.setPower(Math.abs(speed));
 
-        while (opModeIsActive() && (runtime.seconds() < sleep)
+
+        long startTime = System.currentTimeMillis();
+        while (opModeIsActive() && (runtime.seconds() < 5.0)
                 && (backLeft.isBusy()
                 && backRight.isBusy()
                 && frontLeft.isBusy()
-                && frontRight.isBusy())) {
+                && frontRight.isBusy()
+                && (System.currentTimeMillis() - startTime < 5000)   )) {
 
             // telemetry
-            telemetry.addData("Running to", " %7d :%7d",
-                    newBLTarget,
-                    newBRTarget,
-                    newFLTarget,
-                    newFRTarget);
+            telemetry.addData("Running to", " %7d :%7d :%7 :%7d",
+                    newBLTar,
+                    newBRTar,
+                    newFLTar,
+                    newFRTar);
             telemetry.addData("Currently at", " at %7d :%7d",
                     backLeft.getCurrentPosition(),
                     backRight.getCurrentPosition(),
@@ -118,13 +119,25 @@ public class VienMechanumAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        boolean reachedTarget = opModeIsActive()
+                && !backLeft.isBusy()
+                && !frontLeft.isBusy()
+                && !backRight.isBusy()
+                && !frontRight.isBusy();
+
+// Stop wheels
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+
         //run using encoder
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
+        return reachedTarget;
     }
 
     @Override
@@ -140,11 +153,11 @@ public class VienMechanumAuto extends LinearOpMode {
         outake = hardwareMap.get(DcMotor.class, "out");
         intake = hardwareMap.get(DcMotor.class, "in");
         //flowers
-        /*
+
         rightFlower = hardwareMap.get(CRServo.class,"f1");
         leftFlower = hardwareMap.get(CRServo.class,"f2");
         //transfer
-        */
+
 
         transfer = hardwareMap.get(CRServo.class, "trn");
 
@@ -174,12 +187,17 @@ public class VienMechanumAuto extends LinearOpMode {
 
         if (opModeIsActive()) {
             //Movement code
-            //move forward
-            encoderDrive(0.5, -1, -1, 1, 1, 2.0);
-            //shoot
-            shooter();
-            //move backwards
-            encoderDrive(0.5, 1, 1, -1, -1, 2.0);
+            //forward 12 in
+            boolean movedForward = encoderDrive(0.5,12,12,12,12);
+
+            //opModeIsActive is to check when the driver hits stop on the driver hub.
+            if (movedForward && opModeIsActive()){
+                shooter();
+                //backwards 12 in
+                encoderDrive(0.5,-12,-12,-12,-12);
+                //strafe right 12 in
+                encoderDrive(0.5,-12,12,12,-12);
+            }
 
             // Stop wheels
             backLeft.setPower(0);

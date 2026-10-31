@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp(name= "Vien TeleOp")
-public class VienTeleOpCode extends LinearOpMode{
+public class VienTeleOp extends LinearOpMode{
     DcMotor backLeft;
     DcMotor backRight;
     DcMotor frontLeft;
@@ -39,8 +39,8 @@ public class VienTeleOpCode extends LinearOpMode{
         transfer = hardwareMap.get(CRServo.class, "trn");
 
         //set direction
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -56,15 +56,15 @@ public class VienTeleOpCode extends LinearOpMode{
 
         while(opModeIsActive()){
             //Buttons>
+            double drive = -gamepad1.left_stick_y;   // Forward / Backward
+            double strafe = gamepad1.left_stick_x;  // Left / Right Strafing
+            double turn = gamepad1.right_stick_x;   // Rotation / Turning (moved to right stick for better control)
 
-            double drive = -gamepad1.left_stick_y;
-            double turn = gamepad1.left_stick_x;
-
-            double backLeftPower = drive + turn;
-            double backRightPower = drive - turn;
-            double frontLeftPower = drive + turn;
-            double frontRightPower = drive - turn;
-            //
+            // Mecanum wheel power formulas
+            double frontLeftPower  = drive + strafe + turn;
+            double backLeftPower   = drive - strafe + turn;
+            double frontRightPower = drive - strafe - turn;
+            double backRightPower  = drive + strafe - turn;
 
             //
             double max = Math.max(1.0, Math.max(
