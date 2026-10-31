@@ -9,18 +9,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
-@TeleOp(name= "Vien Test Code")
+@TeleOp(name= "Vien TeleOp")
 public class VienTeleOpCode extends LinearOpMode{
     DcMotor backLeft;
     DcMotor backRight;
     DcMotor frontLeft;
     DcMotor frontRight;
-    DcMotor outake;
+    DcMotor outtake;
     DcMotor intake;
-    Servo transfer1;
-    Servo transfer2;
+    CRServo flowerL;
+    CRServo flowerR;
+    CRServo transfer;
 
     @Override
     public void runOpMode(){
@@ -29,11 +30,13 @@ public class VienTeleOpCode extends LinearOpMode{
         frontLeft = hardwareMap.get(DcMotor.class, "fl");
         frontRight = hardwareMap.get(DcMotor.class, "fr");
         //outake
-        outake = hardwareMap.get(DcMotor.class, "out");
+        outtake = hardwareMap.get(DcMotor.class, "out");
         intake = hardwareMap.get(DcMotor.class, "in");
-        //servo transfer
-        transfer1 = hardwareMap.get(Servo.class, "t1");
-        transfer2 = hardwareMap.get(Servo.class, "t2");
+        //servo flower
+        flowerL = hardwareMap.get(CRServo.class, "floL");
+        flowerR = hardwareMap.get(CRServo.class, "floR");
+        //transfer
+        transfer = hardwareMap.get(CRServo.class, "trn");
 
         //set direction
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -83,43 +86,53 @@ public class VienTeleOpCode extends LinearOpMode{
             frontRight.setPower(frontRightPower);
             frontLeft.setPower(frontLeftPower);
 
-            //INTAKE
-            if (gamepad1.right_trigger > 1.0) {
+            //GP 1=
+            //INTAKE>>
+            if (gamepad1.right_trigger > 0.5) {
                 intakeOn = true;
             }
+            if (gamepad1.left_trigger > 0.5) {
+                intakeOn = false;
+            }
 
-            if (intakeOn){
+            if (intakeOn) {
                 intake.setPower(0.75);
             } else{
                 intake.setPower(0.0);
             }
 
-            //OUTAKE
-            if (gamepad1.a) {
+            //OUTAKE>>
+            if (gamepad1.right_bumper) {
                 outakeOn = true;
             }
 
-            if (gamepad1.b) {
+            if (gamepad1.left_bumper) {
                 outakeOn = false;
             }
 
             if (outakeOn) {
-                outake.setPower(0.75);
+                outtake.setPower(0.75);
+                transfer.setPower(0.3);
             } else{
-                outake.setPower(0.0);
+                outtake.setPower(0.0);
+                transfer.setPower(0.0);
             }
 
-            //BOB THE SERVO
-            if (gamepad1.x){
-                transfer1.setPosition(1.0);
-            } else {
-                transfer1.setPosition(0.0);
+            //Flower Left>>
+            if (gamepad1.x) {
+                flowerL.setPower(0.5);
             }
 
-            if (gamepad1.y){
-                transfer2.setPosition(1.0);
-            } else {
-                transfer2.setPosition(0.0);
+            if (gamepad1.y) {
+                flowerL.setPower(0);
+            }
+
+            //Flower Right>>
+            if (gamepad1.a){
+                flowerR.setPower(0.5);
+            }
+            if (gamepad1.b){
+                flowerR.setPower(0);
             }
 
         }

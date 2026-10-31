@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+//Code moves robot forwards, shoots, and moves backwards.
 
 //imports
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,15 +22,16 @@ public class VienMechanumAuto extends LinearOpMode {
     private DcMotor frontRight = null;//0
 
     //assigning intake and outake
-    private DcMotor outake = null;//Exp 1
-    private DcMotor intake = null;//Exp 0
+    private DcMotor outake = null;//Exp 2
+    private DcMotor intake = null;//Exp 1
 
     //flower servos
-    private CRServo leftFlower = null; // 1
-    private CRServo rightFlower = null; // 0
-
+   /*
+    private CRServo leftFlower = null; // Exp 1
+    private CRServo rightFlower = null; //Exp  0
+*/
     //transfer
-    private CRServo transfer = null; // 2
+    private CRServo transfer = null; // Exp 2
 
 
     //104 mm mechanum wheels
@@ -73,8 +75,8 @@ public class VienMechanumAuto extends LinearOpMode {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //set new target
-        int newBLTarget = backLeft.getCurrentPosition() + (int) (backLeftInches * COUNTS_PER_INCH);
-        int newBRTarget = backRight.getCurrentPosition() + (int) (backRightInches * COUNTS_PER_INCH);
+        int newBLTarget = backLeft.getCurrentPosition() - (int) (backLeftInches * COUNTS_PER_INCH);
+        int newBRTarget = backRight.getCurrentPosition() - (int) (backRightInches * COUNTS_PER_INCH);
         int newFLTarget = frontLeft.getCurrentPosition() + (int) (frontLeftInches * COUNTS_PER_INCH);
         int newFRTarget = frontRight.getCurrentPosition() + (int) (frontRightInches * COUNTS_PER_INCH);
 
@@ -138,9 +140,12 @@ public class VienMechanumAuto extends LinearOpMode {
         outake = hardwareMap.get(DcMotor.class, "out");
         intake = hardwareMap.get(DcMotor.class, "in");
         //flowers
+        /*
         rightFlower = hardwareMap.get(CRServo.class,"f1");
         leftFlower = hardwareMap.get(CRServo.class,"f2");
         //transfer
+        */
+
         transfer = hardwareMap.get(CRServo.class, "trn");
 
 
@@ -170,11 +175,11 @@ public class VienMechanumAuto extends LinearOpMode {
         if (opModeIsActive()) {
             //Movement code
             //move forward
-            encoderDrive(0.75, 12, 12, 12, 12, 2.0);
+            encoderDrive(0.5, -1, -1, 1, 1, 2.0);
             //shoot
             shooter();
             //move backwards
-            encoderDrive(0.75, -12, -12, -12, -12, 2.0);
+            encoderDrive(0.5, 1, 1, -1, -1, 2.0);
 
             // Stop wheels
             backLeft.setPower(0);
