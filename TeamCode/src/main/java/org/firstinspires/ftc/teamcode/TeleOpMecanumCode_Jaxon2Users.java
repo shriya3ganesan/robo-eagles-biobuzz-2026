@@ -160,7 +160,6 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
         Transfer.setPower(0.0);
         Bob.setPower(0.0);
         Tim.setPower(0.0);
-
     }
 
 }
