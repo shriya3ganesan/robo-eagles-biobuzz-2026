@@ -32,6 +32,14 @@ public class TeleOp_Code extends LinearOpMode {
             double turn = gamepad1.right_stick_x;
             double leftPower = drive + turn; // - + - = +
             double rightPower = drive - turn; // + + - = -
+
+            //(
+            double max = Math.max(1.0, Math.max(Math.abs(leftPower), Math.abs(rightPower)));
+
+            leftPower /= max;
+            rightPower /= max;
+            //)
+
             Left.setPower(leftPower);
             Right.setPower(rightPower);
 
@@ -43,12 +51,7 @@ public class TeleOp_Code extends LinearOpMode {
                 Bob.setPosition(0.0);
             }
 
-            //(
-            double max = Math.max(1.0, Math.max(Math.abs(leftPower), Math.abs(rightPower)));
 
-            leftPower /= max;
-            rightPower /= max;
-            //)
 
 
         }
