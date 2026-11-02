@@ -140,6 +140,15 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
 
             //Telemetry -
 
+            telemetry.addData("Drive", drive);
+            telemetry.addData("Strafe", strafe);
+            telemetry.addData("Turn", turn);
+
+            telemetry.addData("FL Power", frontLeftPower);
+            telemetry.addData("FR Power", frontRightPower);
+            telemetry.addData("BL Power", backLeftPower);
+            telemetry.addData("BR Power", backRightPower);
+
             telemetry.addData("Intake On", intakeOn);
             telemetry.addData("Intake Power", Intake.getPower());
             telemetry.addData("Outtake Power", Outtake.getPower());
