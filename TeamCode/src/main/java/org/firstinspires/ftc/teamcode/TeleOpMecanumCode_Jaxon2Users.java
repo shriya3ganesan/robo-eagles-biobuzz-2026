@@ -139,7 +139,6 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
             }
 
             //Telemetry -
-
             telemetry.addData("FL Power", frontLeftPower);
             telemetry.addData("FR Power", frontRightPower);
             telemetry.addData("BL Power", backLeftPower);
