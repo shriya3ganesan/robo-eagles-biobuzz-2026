@@ -50,10 +50,10 @@ public class ShootingAuto extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            outtakeMotor.setPower(1.0);
+            outtakeMotor.setPower(-0.53);
             sleep(1500);
 
-            transferSystem.setPower(0.5);
+            transferSystem.setPower(-1);
             sleep(3000);
 
             outtakeMotor.setPower(0);
