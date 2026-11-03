@@ -16,8 +16,8 @@ public class ShootingAuto extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor intakeMotor;
     private DcMotor outtakeMotor;
-    private Servo rightServo;
-    private Servo leftServo;
+    private CRServo rightServo;
+    private CRServo leftServo;
     private CRServo transferSystem;
 
 
@@ -30,8 +30,8 @@ public class ShootingAuto extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "bl");
         intakeMotor = hardwareMap.get(DcMotor.class, "im");
         outtakeMotor = hardwareMap.get(DcMotor.class, "om");
-        rightServo = hardwareMap.get(Servo.class, "rs");
-        leftServo = hardwareMap.get(Servo.class, "ls");
+        rightServo = hardwareMap.get(CRServo.class, "rs");
+        leftServo = hardwareMap.get(CRServo.class, "ls");
         transferSystem = hardwareMap.get(CRServo.class, "ts");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
