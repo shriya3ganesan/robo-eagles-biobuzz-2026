@@ -170,7 +170,6 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
         Tim.setPower(0.0);
 
     }
-
 }
 
 
