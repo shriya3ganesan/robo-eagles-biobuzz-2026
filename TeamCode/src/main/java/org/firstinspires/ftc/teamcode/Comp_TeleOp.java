@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "My name Jeff 2")
-public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
+@TeleOp(name = "Comp_TeleOp")
+public class Comp_TeleOp extends LinearOpMode {
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
