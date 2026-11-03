@@ -139,14 +139,18 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
             }
 
             //Telemetry -
-// DEBUG TELEMETRY
-            telemetry.clearAll();
 
-            telemetry.addData("TEST", "NEW CODE RUNNING");
-            telemetry.addData("Drive", -gamepad1.left_stick_y);
-            telemetry.addData("Strafe", gamepad1.left_stick_x);
-            telemetry.addData("Turn", gamepad1.right_stick_x);
+            telemetry.addData("FL Power", frontLeftPower);
+            telemetry.addData("FR Power", frontRightPower);
+            telemetry.addData("BL Power", backLeftPower);
+            telemetry.addData("BR Power", backRightPower);
 
+            telemetry.addData("Intake On", intakeOn);
+            telemetry.addData("Intake Power", Intake.getPower());
+            telemetry.addData("Outtake Power", Outtake.getPower());
+            telemetry.addData("Transfer Power", Transfer.getPower());
+            telemetry.addData("Bob Power", Bob.getPower());
+            telemetry.addData("Tim Power", Tim.getPower());
             telemetry.update();
 
         }
