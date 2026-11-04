@@ -115,7 +115,7 @@ public class Comp_TeleOp extends LinearOpMode {
             }
 
             if (outtakeOn) {
-                Outtake.setPower(-0.53);
+                Outtake.setPower(-0.50);
             } else {
                 Outtake.setPower(0.0);
             }
