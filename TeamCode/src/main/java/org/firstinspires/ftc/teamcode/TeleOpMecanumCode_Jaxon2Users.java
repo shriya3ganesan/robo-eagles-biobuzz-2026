@@ -99,8 +99,13 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
                 intakeOn = false;
             }
 
-            if (intakeOn) {
+            if (gamepad2.dpad_left) {
                 Intake.setPower(-0.75);
+
+            }
+
+            if (intakeOn) {
+                Intake.setPower(0.75);
             } else {
                 Intake.setPower(0.0);
             }
@@ -114,7 +119,7 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
             }
 
             if (outtakeOn) {
-                Outtake.setPower(-0.53);
+                Outtake.setPower(-0.50);
             } else {
                 Outtake.setPower(0.0);
             }
@@ -170,6 +175,7 @@ public class TeleOpMecanumCode_Jaxon2Users extends LinearOpMode {
         Tim.setPower(0.0);
 
     }
+
 }
 
 
