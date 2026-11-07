@@ -1,0 +1,174 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+@TeleOp(name = "Mecanum TeleOp", group = "Linear OpMode")
+public class MecanumTeleOp extends LinearOpMode {
+
+    // Drivetrain motors
+    private DcMotor frontLeft;
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
+
+    // Intake and outtake motors
+    private DcMotor intake;
+    private DcMotor outtake;
+
+    // Continuous rotation servos
+    private CRServo continuousServo;
+    private CRServo servo1;
+    private CRServo servo2;
+
+    // Toggle states for the intake
+    private boolean intakeActive = false;
+    private boolean intakeReverse = false;
+
+    // Toggle state for the outtake
+    private boolean outtakeActive = false;
+
+    // Variables to track button states from the previous loop frame
+    private boolean lastA = false;
+    private boolean lastB = false;
+    private boolean lastY = false;
+
+    @Override
+    public void runOpMode() {
+        // Initialize drivetrain
+        frontLeft  = hardwareMap.get(DcMotor.class, "a");
+        frontRight = hardwareMap.get(DcMotor.class, "b");
+        backLeft   = hardwareMap.get(DcMotor.class, "c");
+        backRight  = hardwareMap.get(DcMotor.class, "d");
+
+        // Initialize intake and outtake
+        intake  = hardwareMap.get(DcMotor.class, "int");
+        outtake = hardwareMap.get(DcMotor.class, "out");
+
+        // Initialize continuous rotation servos
+        continuousServo = hardwareMap.get(CRServo.class, "CR");
+        servo1          = hardwareMap.get(CRServo.class, "S1");
+        servo2          = hardwareMap.get(CRServo.class, "S2");
+
+        // Standard Mecanum Drivetrain Directions:
+        // Set left side to FORWARD and right side to REVERSE (or vice-versa depending on physical mounting).
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Brake drivetrain when sticks are released
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        telemetry.addLine("Mecanum TeleOp Ready - Gamepad 1 & 2");
+        telemetry.update();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            // ===== DRIVING (GAMEPAD 1) =====
+            double forward = -gamepad1.left_stick_y;
+            double strafe  =  gamepad1.left_stick_x;
+            double turn    =  gamepad1.right_stick_x;
+
+            // Standard Mecanum drive formulas
+            double fl = forward + strafe + turn;
+            double fr = forward - strafe - turn;
+            double bl = forward - strafe + turn;
+            double br = forward + strafe + turn; // fixed sign for backRight turn compatibility
+
+            // Normalize motor powers if any exceed 1.0
+            double max = Math.max(1.0, Math.max(
+                    Math.abs(fl), Math.max(
+                            Math.abs(fr), Math.max(
+                                    Math.abs(bl), Math.abs(br)))));
+
+            frontLeft.setPower(fl / max);
+            frontRight.setPower(fr / max);
+            backLeft.setPower(bl / max);
+            backRight.setPower(br / max);
+
+            // ===== INTAKE TOGGLE LOGIC: A / B (GAMEPAD 1) =====
+            if (gamepad1.a && !lastA) {
+                if (intakeActive && !intakeReverse) {
+                    intakeActive = false;
+                } else {
+                    intakeActive = true;
+                    intakeReverse = false;
+                }
+            }
+
+            if (gamepad1.b && !lastB) {
+                if (intakeActive && intakeReverse) {
+                    intakeActive = false;
+                } else {
+                    intakeActive = true;
+                    intakeReverse = true;
+                }
+            }
+
+            // ===== OUTTAKE TOGGLE LOGIC: Y (GAMEPAD 2) =====
+            if (gamepad2.y && !lastY) {
+                outtakeActive = !outtakeActive;
+            }
+
+            // Save current button states for the next loop cycle
+            lastA = gamepad1.a;
+            lastB = gamepad1.b;
+            lastY = gamepad2.y;
+
+            // Apply intake power
+            if (intakeActive) {
+                intake.setPower(intakeReverse ? -1.0 : 1.0);
+            } else {
+                intake.setPower(0.0);
+            }
+
+            // Apply outtake power based on toggle state
+            if (outtakeActive) {
+                outtake.setPower(-0.45);
+            } else {
+                outtake.setPower(0.0);
+            }
+
+            // ===== CR: RIGHT TRIGGER (GAMEPAD 2) =====
+            continuousServo.setPower(-gamepad2.right_trigger);
+
+            // ===== S1: LEFT BUMPER (GAMEPAD 2) =====
+            servo1.setPower(gamepad2.left_bumper ? 1.0 : 0.0);
+
+            // ===== S2: RIGHT BUMPER (GAMEPAD 2) =====
+            servo2.setPower(gamepad2.right_bumper ? -1.0 : 0.0);
+
+            // ===== TELEMETRY =====
+            telemetry.addData("Forward", forward);
+            telemetry.addData("Strafe", strafe);
+            telemetry.addData("Turn", turn);
+            telemetry.addData("Intake Power", intake.getPower());
+            telemetry.addData("Intake Mode", intakeActive ? (intakeReverse ? "REVERSE" : "FORWARD") : "STOPPED");
+            telemetry.addData("Outtake Power", outtake.getPower());
+            telemetry.addData("Outtake Active", outtakeActive ? "RUNNING" : "STOPPED");
+            telemetry.addData("CR Power", continuousServo.getPower());
+            telemetry.addData("S1 Power", servo1.getPower());
+            telemetry.addData("S2 Power", servo2.getPower());
+            telemetry.update();
+        }
+
+        // Stop all motors and continuous rotation servos
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        intake.setPower(0);
+        outtake.setPower(0);
+        continuousServo.setPower(0);
+        servo1.setPower(0);
+        servo2.setPower(0);
+    }
+}
