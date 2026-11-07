@@ -1,0 +1,178 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.CRServo;
+
+@Autonomous(name = "Auto2", group = "Linear OpMode")
+public class Auto2 extends LinearOpMode {
+
+    // Drivetrain motors
+    private DcMotor frontLeft;
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
+
+    // Intake and outtake motors
+    private DcMotor intake;
+    private DcMotor outtake;
+
+    // Continuous rotation servos
+    private CRServo continuousServo;
+    private CRServo servo1;
+    private CRServo servo2;
+
+    // Advanced Encoder Tuning Constants
+    static final double COUNTS_PER_MOTOR_REV = 537.7; // Ticks for standard GoBILDA 19.2:1 / Yellow Jacket motor
+    static final double DRIVE_GEAR_REDUCTION = 1.0;   // 1.0 if wheels are direct-driven without external gears
+    static final double WHEEL_DIAMETER_INCHES = 3.77953; // Standard 96mm Mecanum Wheel diameter in inches
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+
+    @Override
+    public void runOpMode() {
+        // Initialize drivetrain (Strictly retaining your exact hardware configuration mappings)
+        frontLeft = hardwareMap.get(DcMotor.class, "a");
+        frontRight = hardwareMap.get(DcMotor.class, "b");
+        backLeft = hardwareMap.get(DcMotor.class, "c");
+        backRight = hardwareMap.get(DcMotor.class, "d");
+
+        // Initialize intake and outtake
+        intake = hardwareMap.get(DcMotor.class, "int");
+        outtake = hardwareMap.get(DcMotor.class, "out");
+
+        // Initialize continuous rotation servos
+        continuousServo = hardwareMap.get(CRServo.class, "CR");
+        servo1 = hardwareMap.get(CRServo.class, "S1");
+        servo2 = hardwareMap.get(CRServo.class, "S2");
+
+        // Drivetrain directions
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Brake drivetrain immediately on target arrival to kill drift
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Advanced Reset: Zeros out the internal position counters completely before match start
+        telemetry.addLine("Status: Resetting Encoders...");
+        telemetry.update();
+        setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addLine("Status: Advanced Autonomous Ready");
+        telemetry.update();
+
+        waitForStart();
+
+        if (opModeIsActive()) {
+            // STEP 1: Shoot via CR Servo and Outtake simultaneous activation (UNTOUCHED)
+            telemetry.addLine("Executing: Advanced Shoot Sequence");
+            telemetry.update();
+
+            outtake.setPower(-0.52);
+            sleep(5000);
+            continuousServo.setPower(-1.0); // Active continuous loader feed
+            sleep(5000);                   // Exactly 1500 milliseconds of tracking
+
+            outtake.setPower(0.0);         // Disengage shooting modules
+            continuousServo.setPower(0.0);
+
+            // Ensure drivetrain is in time-based run mode
+            setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // STEP 2: Move Backwards 325 Milliseconds (UNTOUCHED)
+            telemetry.addLine("Executing: Move Backwards (325ms)");
+            telemetry.update();
+            frontLeft.setPower(-0.5);
+            frontRight.setPower(-0.5);
+            backLeft.setPower(-0.5);
+            backRight.setPower(-0.5);
+            sleep(305);
+
+            sleep(50);
+
+            // NEW STEP 3: Strafe Left for exactly 300 Milliseconds
+            telemetry.addLine("Executing: Strafe Left (300ms)");
+            telemetry.update();
+            frontLeft.setPower(-0.5);
+            frontRight.setPower(0.5);
+            backLeft.setPower(0.5);
+            backRight.setPower(-0.5);
+            sleep(1000);
+
+            sleep(50);
+
+            // STEP 4: Final Safety Stop
+            telemetry.addLine("Status: Autonomous Path Complete");
+            telemetry.update();
+            frontLeft.setPower(0.0);       // Cut power to all motors
+            frontRight.setPower(0.0);
+            backLeft.setPower(0.0);
+            backRight.setPower(0.0);
+        }
+    }
+
+    /**
+     * Helper function to change all drivetrain motor run modes simultaneously
+     */
+    private void setDrivetrainMode(DcMotor.RunMode mode) {
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
+    }
+
+    /**
+     * Advanced Helper function to execute uniform coordinate calculations and precise path operations.
+     */
+    public void encoderDrive(double speed, double leftFrontInches, double rightFrontInches,
+                             double leftBackInches, double rightBackInches, double timeoutS) {
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
+        int newLeftBackTarget;
+        int newRightBackTarget;
+
+        if (opModeIsActive()) {
+            newLeftFrontTarget = frontLeft.getCurrentPosition() + (int)(leftFrontInches * COUNTS_PER_INCH);
+            newRightFrontTarget = frontRight.getCurrentPosition() + (int)(rightFrontInches * COUNTS_PER_INCH);
+            newLeftBackTarget = backLeft.getCurrentPosition() + (int)(leftBackInches * COUNTS_PER_INCH);
+            newRightBackTarget = backRight.getCurrentPosition() + (int)(rightBackInches * COUNTS_PER_INCH);
+
+            frontLeft.setTargetPosition(newLeftFrontTarget);
+            frontRight.setTargetPosition(newRightFrontTarget);
+            backLeft.setTargetPosition(newLeftBackTarget);
+            backRight.setTargetPosition(newRightBackTarget);
+
+            setDrivetrainMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(Math.abs(speed));
+            frontRight.setPower(Math.abs(speed));
+            backLeft.setPower(Math.abs(speed));
+            backRight.setPower(Math.abs(speed));
+
+            long startTime = System.currentTimeMillis();
+
+            while (opModeIsActive() &&
+                    ((System.currentTimeMillis() - startTime) < (timeoutS * 1000)) &&
+                    (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+                telemetry.addData("Target FL/FR", "%7d :%7d", newLeftFrontTarget, newRightFrontTarget);
+                telemetry.addData("Actual FL/FR", "%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
+                telemetry.update();
+            }
+
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+
+            setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+}
