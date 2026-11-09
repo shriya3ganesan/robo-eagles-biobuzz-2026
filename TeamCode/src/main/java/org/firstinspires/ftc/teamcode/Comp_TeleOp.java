@@ -43,6 +43,7 @@ public class Comp_TeleOp extends LinearOpMode {
         //+
         boolean intakeOn = false;
         boolean outtakeOn = false;
+        boolean intakeReverse = false;
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -97,15 +98,22 @@ public class Comp_TeleOp extends LinearOpMode {
 
             if (gamepad2.left_bumper) {
                 intakeOn = false;
+                intakeReverse = false;
             }
 
             if (gamepad2.dpad_left) {
-                Intake.setPower(-0.75);
+                intakeReverse = true;
 
             }
 
             if (intakeOn) {
                 Intake.setPower(0.75);
+            } else {
+                Intake.setPower(0.0);
+            }
+
+            if (intakeReverse) {
+                Intake.setPower(-0.75);
             } else {
                 Intake.setPower(0.0);
             }
