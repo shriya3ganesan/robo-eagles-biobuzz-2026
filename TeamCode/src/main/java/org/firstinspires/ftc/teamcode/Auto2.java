@@ -33,19 +33,19 @@ public class Auto2 extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize drivetrain (Strictly retaining your exact hardware configuration mappings)
-        frontLeft = hardwareMap.get(DcMotor.class, "a");
-        frontRight = hardwareMap.get(DcMotor.class, "b");
-        backLeft = hardwareMap.get(DcMotor.class, "c");
-        backRight = hardwareMap.get(DcMotor.class, "d");
+        frontLeft = hardwareMap.get(DcMotor.class, "FR");
+        frontRight = hardwareMap.get(DcMotor.class, "FL");
+        backLeft = hardwareMap.get(DcMotor.class, "BR");
+        backRight = hardwareMap.get(DcMotor.class, "BL");
 
         // Initialize intake and outtake
-        intake = hardwareMap.get(DcMotor.class, "int");
-        outtake = hardwareMap.get(DcMotor.class, "out");
+        intake = hardwareMap.get(DcMotor.class, "Int");
+        outtake = hardwareMap.get(DcMotor.class, "Out");
 
         // Initialize continuous rotation servos
-        continuousServo = hardwareMap.get(CRServo.class, "CR");
-        servo1 = hardwareMap.get(CRServo.class, "S1");
-        servo2 = hardwareMap.get(CRServo.class, "S2");
+        continuousServo = hardwareMap.get(CRServo.class, "Trn");
+        servo1 = hardwareMap.get(CRServo.class, "B");
+        servo2 = hardwareMap.get(CRServo.class, "T");
 
         // Drivetrain directions
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,15 +70,27 @@ public class Auto2 extends LinearOpMode {
 
         waitForStart();
 
+
+
         if (opModeIsActive()) {
             // STEP 1: Shoot via CR Servo and Outtake simultaneous activation (UNTOUCHED)
             telemetry.addLine("Executing: Advanced Shoot Sequence");
             telemetry.update();
 
-            outtake.setPower(-0.52);
-            sleep(5000);
-            continuousServo.setPower(-1.0); // Active continuous loader feed
-            sleep(5000);                   // Exactly 1500 milliseconds of tracking
+            outtake.setPower(-0.49);
+            sleep(1500);
+            continuousServo.setPower(-0.3);
+            outtake.setPower(-0.6);// Active continuous loader feed
+            sleep(200);
+            continuousServo.setPower(0);
+            sleep(200);
+            continuousServo.setPower(-0.3);
+            sleep(200);
+            continuousServo.setPower(0);
+            sleep(200);
+            continuousServo.setPower(-0.3);
+
+            sleep(3500);               // Exactly 1500 milliseconds of tracking
 
             outtake.setPower(0.0);         // Disengage shooting modules
             continuousServo.setPower(0.0);
@@ -93,20 +105,106 @@ public class Auto2 extends LinearOpMode {
             frontRight.setPower(-0.5);
             backLeft.setPower(-0.5);
             backRight.setPower(-0.5);
-            sleep(305);
+            sleep(235);
 
             sleep(50);
 
             // NEW STEP 3: Strafe Left for exactly 300 Milliseconds
             telemetry.addLine("Executing: Strafe Left (300ms)");
             telemetry.update();
+            frontLeft.setPower(0.5);
+            frontRight.setPower(-0.5);
+            backLeft.setPower(-0.5);
+            backRight.setPower(0.5);
+            sleep(800);
+
+            sleep(50);
+
+            intake.setPower((1.0));
+
+            frontLeft.setPower(0.5);
+            frontRight.setPower(0.5);
+            backLeft.setPower(0.5);
+            backRight.setPower(0.5);
+            sleep(650);
+
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            sleep(2550);
+
+            intake.setPower(0);
+            sleep(50);
+
             frontLeft.setPower(-0.5);
             frontRight.setPower(0.5);
             backLeft.setPower(0.5);
             backRight.setPower(-0.5);
-            sleep(1000);
+            sleep(900);
 
             sleep(50);
+
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+
+            sleep(50);
+
+            /*frontLeft.setPower(-0.5);
+            frontRight.setPower(-0.5);
+            backLeft.setPower(-0.5);
+            backRight.setPower(-0.5);
+            sleep(345);*/
+
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+
+            sleep(50);
+
+            outtake.setPower(-0.49);
+            sleep(1500);
+            continuousServo.setPower(-0.3);
+            //outtake.setPower(-0.46);// Active continuous loader feed
+            sleep(200);
+            continuousServo.setPower(0);
+            sleep(200);
+            continuousServo.setPower(-0.3);
+            sleep(200);
+            continuousServo.setPower(0);
+            sleep(200);
+            continuousServo.setPower(-0.3);
+
+            sleep(3500);               // Exactly 1500 milliseconds of tracking
+
+            outtake.setPower(0.0);         // Disengage shooting modules
+            continuousServo.setPower(0.0);         // Exactly 1500 milliseconds of tracking
+
+            outtake.setPower(0.0);         // Disengage shooting modules
+            continuousServo.setPower(0.0);
+
+            frontLeft.setPower(0.5);
+            frontRight.setPower(-0.5);
+            backLeft.setPower(-0.5);
+            backRight.setPower(0.5);
+            sleep(485);
+
+            sleep(50);
+
+            frontLeft.setPower(-0.5);
+            frontRight.setPower(-0.5);
+            backLeft.setPower(-0.5);
+            backRight.setPower(-0.5);
+            sleep(1300);
+
+            frontLeft.setPower(0.5);
+            frontRight.setPower(-0.5);
+            backLeft.setPower(-0.5);
+            backRight.setPower(0.5);
+            sleep(275);
 
             // STEP 4: Final Safety Stop
             telemetry.addLine("Status: Autonomous Path Complete");
