@@ -22,7 +22,7 @@ To gain a better understanding of how the samples are organized, and how to inte
 naming system, it will help to understand the conventions that were used during their creation.
 
 These conventions are described (in detail) in the sample_conventions.md file in this folder.
-
+![img.png](img.png)
 To summarize: A range of different samples classes will reside in the java/external/samples.
 The class names will follow a naming convention which indicates the purpose of each class.
 The prefix of the name will be one of the following:
