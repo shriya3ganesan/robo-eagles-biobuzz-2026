@@ -32,10 +32,10 @@ public class Comp_TeleOp extends LinearOpMode {
         Tim = hardwareMap.get(CRServo.class, "T");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         Intake.setDirection(DcMotorSimple.Direction.FORWARD);
         //+
@@ -43,7 +43,6 @@ public class Comp_TeleOp extends LinearOpMode {
         //+
         boolean intakeOn = false;
         boolean outtakeOn = false;
-        boolean intakeReverse = false;
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,11 +63,12 @@ public class Comp_TeleOp extends LinearOpMode {
             // Your robot code goes here!
 
             double drive = -gamepad1.left_stick_y;
-            double strafe = -gamepad1.left_stick_x;
+            double strafe = gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
 
-            telemetry.addData("RAW Y", gamepad1.left_stick_y);
-            telemetry.addData("CALCULATED DRIVE", drive);
+            if (Math.abs(drive) < 0.05) drive = 0;
+            if (Math.abs(strafe) < 0.05) strafe = 0;
+            if (Math.abs(turn) < 0.05) turn = 0;
 
             double frontLeftPower = drive + strafe + turn;
             double backLeftPower = drive - strafe + turn;
@@ -98,22 +98,10 @@ public class Comp_TeleOp extends LinearOpMode {
 
             if (gamepad2.left_bumper) {
                 intakeOn = false;
-                intakeReverse = false;
-            }
-
-            if (gamepad2.dpad_left) {
-                intakeReverse = true;
-
             }
 
             if (intakeOn) {
                 Intake.setPower(0.75);
-            } else {
-                Intake.setPower(0.0);
-            }
-
-            if (intakeReverse) {
-                Intake.setPower(-0.75);
             } else {
                 Intake.setPower(0.0);
             }
@@ -127,7 +115,7 @@ public class Comp_TeleOp extends LinearOpMode {
             }
 
             if (outtakeOn) {
-                Outtake.setPower(-0.48);
+                Outtake.setPower(-0.53);
             } else {
                 Outtake.setPower(0.0);
             }
@@ -145,17 +133,12 @@ public class Comp_TeleOp extends LinearOpMode {
             }
 
             if (gamepad2.x) {
-                Transfer.setPower(-1.0);
+                Transfer.setPower(1.0);
             } else if (gamepad2.y) {
                 Transfer.setPower(0.0);
             }
 
             //Telemetry -
-            telemetry.addData("Left Stick Y", gamepad1.left_stick_y);
-            telemetry.addData("Drive", drive);
-            telemetry.addData("Strafe", strafe);
-            telemetry.addData("Turn", turn);
-
             telemetry.addData("FL Power", frontLeftPower);
             telemetry.addData("FR Power", frontRightPower);
             telemetry.addData("BL Power", backLeftPower);
