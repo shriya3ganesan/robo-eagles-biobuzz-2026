@@ -225,7 +225,7 @@ public class AI_Trial_Camera extends LinearOpMode {
             } else if (gamepad2.dpad_down) {
                 Bob.setPower(0.0);
             }
-
+//hi
             if (gamepad2.a) {
                 Tim.setPower(1.0);
             } else if (gamepad2.b) {
