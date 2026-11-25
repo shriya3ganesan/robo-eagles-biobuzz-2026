@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -235,24 +236,33 @@ public class AutoShooter extends LinearOpMode {
             setDrivetrainMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             setDrivetrainMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            // Scan for AprilTags continuously during INIT while waiting for Play
+            // Scan for AprilTags during INIT
             while (!isStarted() && !isStopRequested()) {
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-                if (!currentDetections.isEmpty()) {
-                    for (AprilTagDetection detection : currentDetections) {
-                        if (detection.metadata!= null) {
-                            detectedTagId = detection.id;
+                List<AprilTagDetection> currentDetections =
+                        aprilTag.getDetections();
+
+                for (AprilTagDetection detection : currentDetections) {
+
+                    if (detection instanceof AprilTagSingleDetection) {
+
+                        AprilTagSingleDetection singleDetection =
+                                (AprilTagSingleDetection) detection;
+
+                        if (singleDetection.metadata != null) {
+                            detectedTagId = singleDetection.id;
                         }
                     }
                 }
 
                 telemetry.addLine("Status: Advanced Autonomous Ready");
+
                 if (detectedTagId != -1) {
                     telemetry.addData("Locked AprilTag ID", detectedTagId);
                 } else {
-                    telemetry.addLine("Scanning for AprilTag...");
+                    telemetry.addLine("No AprilTag detected");
                 }
+
                 telemetry.update();
                 sleep(20);
             }
