@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Comp_TeleOp")
 public class TeleopForComp extends LinearOpMode {
+    //HHIIII
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
